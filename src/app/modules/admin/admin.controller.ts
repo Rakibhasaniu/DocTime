@@ -7,7 +7,7 @@ const getAllAdmin = async(req:Request,res:Response) => {
     try{
 
 
-    const result = await AdminServices.getAllFromDB();
+    const result = await AdminServices.getAllFromDB(req.query);
 
     res.status(200).json({
         success:true,
