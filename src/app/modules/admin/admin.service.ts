@@ -1,11 +1,11 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { searchAbleField } from "./admin.constant";
 import calculatePagination from "../../../helpers/paginationHelpers";
+import prisma from "../../../shared/prisma";
 
 
 
 
-const prisma = new PrismaClient();
 // [
 //     {
 //         name: {
@@ -61,7 +61,18 @@ const getAllFromDB = async(params:any,options:any) => {
             createdAt:'desc'
         }
     });
-    return result;
+
+    const total=await prisma.admin.count({
+        where:typeSolved
+    })
+    return {
+        meta:{
+            page,
+            limit,
+            total,
+        },
+        data:result,
+    }
 
 }
 

@@ -15,7 +15,8 @@ const getAllAdmin = async(req:Request,res:Response) => {
     res.status(200).json({
         success:true,
         message:'Admin Data Fetched Successfully',
-        data:result
+        meta:result?.meta,
+        data:result.data
     })
     } catch (err){
         res.status(500).json({
