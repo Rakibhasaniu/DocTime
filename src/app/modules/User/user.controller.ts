@@ -1,24 +1,22 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserService } from "./user.service";
+import sendResponse from "../../../shared/sendResponse";
+import httpStatus from "http-status";
 
 
-const createAdmin = async(req:Request,res:Response) => {
+const createAdmin = async(req:Request,res:Response,next:NextFunction) => {
     // const {admin} = req.body;
     try{
         const result = await UserService.createAdminInDB(req.body);
     
-    res.status(200).json({
-        success:true,
-        message:"Admin Created Successfully",
-        data:result
-    })
-    }catch(err){
-        res.status(500).json({
-            success:false,
-            message: err?.name || 'Something went wrong',
-            error:err
-
+        sendResponse(res,{
+            statusCode:httpStatus.OK,
+            success:true,
+            message:'Admin Data Deleted',
+            data:result
         })
+    }catch(err){
+        next(err);
     }
 }
 
