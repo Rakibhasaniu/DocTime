@@ -83,6 +83,11 @@ const getSingleDataFromDB = async(id:string) => {
     return result;
 }
 const updateDataIntoDB = async(id:string,data: Partial<Admin>) => {
+    await prisma.admin.findUniqueOrThrow({
+        where:{
+            id
+        }
+    })
     const result = await prisma.admin.update({
         where:{
             id
