@@ -93,10 +93,33 @@ const deleteData = async(req:Request,res:Response)=>{
     }
     
 }
+const softDeleteData = async(req:Request,res:Response)=>{
+    try{
+        const {id} = req.params;
+        const result = await AdminServices.softDeleteDataFromDB(id);
+        res.status(200).json({
+            success:true,
+            message:'Admin Data Deleted',
+            // meta:result?.meta,
+            data:result
+        })
+
+    }
+    catch(err){
+        res.status(500).json({
+            success:false,
+            message: err?.name || 'Something went wrong',
+            error:err
+
+        })
+    }
+    
+}
 
 export const AdminController = {
     getAllAdmin,
     getSingleData,
     updateData,
-    deleteData
+    deleteData,
+    softDeleteData
 }
