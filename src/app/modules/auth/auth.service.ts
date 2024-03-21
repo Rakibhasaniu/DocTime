@@ -1,7 +1,8 @@
 import prisma from "../../../shared/prisma"
 import * as bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import generateToken from "../../../helpers/jwtToken";
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import generateToken, { verifyToken } from "../../../helpers/jwtToken";
+import { UserStatus } from "@prisma/client";
 
 
 
@@ -11,7 +12,8 @@ const loginUser =async (payload:{
 }) =>{
     const userData = await prisma.user.findUniqueOrThrow({
         where:{
-            email:payload.email
+            email:payload.email,
+            status:UserStatus.ACTIVE
         }
     })
     const isCorrectPassword:boolean = await bcrypt.compare(payload.password,userData.password);
@@ -42,6 +44,36 @@ const loginUser =async (payload:{
     };
 }
 
+const refreshToken = async(token: string)=> {
+    let decodeData;
+    try {
+         decodeData = verifyToken(token,'abcdefgh')
+
+    } catch (err) {
+        throw new Error("You are not authorized")
+    }
+    const isUserExist = await prisma.user.findUniqueOrThrow({
+        where:{
+            email:decodeData?.email,
+            status:UserStatus.ACTIVE
+
+        }
+    })
+    const accessToken = generateToken({
+        email:isUserExist?.email,
+        role:isUserExist?.role,
+    
+       },
+       'abcde','5m'
+       )
+       return {
+        accessToken,
+        
+        needPasswordChange:isUserExist?.needsPasswordChage
+
+    };
+}
 export const AuthServices = {
     loginUser,
+    refreshToken
 }

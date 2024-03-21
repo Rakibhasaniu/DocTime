@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 
-const generateToken = (payload:any,secretKey: string,time:string) =>{
+const generateToken = (payload:any,secretKey: Secret,time:string) =>{
     const token = jwt.sign(
         payload,
         secretKey,
@@ -10,6 +10,9 @@ const generateToken = (payload:any,secretKey: string,time:string) =>{
         }
     )
     return token;
+}
+export const verifyToken =(token:string,secretKey:Secret)=>{
+    return jwt.verify(token,secretKey) as JwtPayload;
 }
 
 export default generateToken;
