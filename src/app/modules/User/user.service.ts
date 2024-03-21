@@ -5,9 +5,10 @@ import prisma from "../../../shared/prisma";
 
 const createAdminInDB = async(data:any) => {
     const hashedPassword:string = await bcrypt.hash(data.password, 10);
+    console.log(hashedPassword);
     const UserData = {
         email:data.admin.email, 
-        password: data.password,
+        password: hashedPassword,
         role: UserRole.ADMIN
     }
 
