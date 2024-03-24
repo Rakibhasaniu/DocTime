@@ -1,4 +1,4 @@
 
 
-export const adminFilterAbleField = ['name','email','searchTerm','contactNumber']
-export const searchAbleField = ['name','email','contactNumber']
+export const adminFlterData =['name','email','searchTerm','contactNumber']
+export const adminSearchAbleFields =['name','email','contactNumber']

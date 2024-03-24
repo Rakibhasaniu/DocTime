@@ -1,31 +1,29 @@
-import { PrismaClient, UserRole } from "@prisma/client"
-import bcrypt from "bcrypt"
-import prisma from "../../../shared/prisma";
+import {  PrismaClient, UserRole } from "@prisma/client"
+import bcrypt  from 'bcrypt';
 
+const prisma = new PrismaClient();
 
-const createAdminInDB = async(data:any) => {
-    const hashedPassword:string = await bcrypt.hash(data.password, 10);
-    console.log(hashedPassword);
-    const UserData = {
-        email:data.admin.email, 
-        password: hashedPassword,
-        role: UserRole.ADMIN
+const createAdminIntoDB = async(payload:any) => {
+    const hashedPassword:string = await bcrypt.hash(payload.password, 10);
+    // console.log(payload)
+    const userData = {
+        email:payload.admin.email,
+        password:hashedPassword,
+        role:UserRole.ADMIN
     }
 
-    const result = await prisma.$transaction(async(transactionClient) => {
-        const createUser = await transactionClient.user.create({
-            data: UserData
+    const result = await prisma.$transaction(async(transac)=> {
+        await transac.user.create({
+            data:userData
         })
-        const createAdmin = await transactionClient.admin.create({
-            data:data.admin
+        const createAdmin = await transac.admin.create({
+            data:payload.admin
         })
         return createAdmin;
     })
-    
     return result;
 }
 
-
-export const UserService = {
-    createAdminInDB
+export const userServices ={
+    createAdminIntoDB
 }

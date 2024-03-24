@@ -1,11 +1,11 @@
 const pick =<T extends Record<string,unknown>,K extends keyof T> (obj:T,keys:K[]):Partial<T> => {
-    const result:Partial<T>={};
+    const finalObj:Partial<T>={};
     for(const key of keys){
-        if(obj && Object.hasOwnProperty.call(obj,key)) {
-            result[key]=obj[key];
+        if(obj && obj.hasOwnProperty.call(obj,key)){
+            finalObj[key]=obj[key]
         }
     }
-    return result;
+    return finalObj;
 }
 
 export default pick;

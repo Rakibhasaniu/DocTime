@@ -1,8 +1,11 @@
-import express, { Request, Response } from  'express';
-import { UserController } from './user.controller';
+import { Router } from "express";
+import { userController } from "./user.controller";
 
-const router = express.Router();
 
-router.post('/',UserController.createAdmin)
+const router = Router();
 
-export const UserRoutes = router;
+router.post('/create-admin',userController.createAdmin)
+router.post('/create-admin',userController.createAdmin)
+
+
+export const userRoutes = router;

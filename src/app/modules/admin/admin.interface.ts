@@ -5,4 +5,3 @@ export type TAdminFilterRequest = {
     contactNumber?: string | undefined;
     searchTerm?: string | undefined;
 }
-
