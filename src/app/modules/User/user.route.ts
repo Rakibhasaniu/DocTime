@@ -4,6 +4,7 @@ import { decodedToken } from "../../utils/decodedToken";
 import config from "../../config";
 import { Secret } from "jsonwebtoken";
 import auth from "../../middleware/auth";
+import { UserRole } from "@prisma/client";
 
 
 const router = Router();
@@ -27,7 +28,7 @@ const router = Router();
 //     }
 // }
 
-router.post('/create-admin',auth("ADMIN","SUPER_ADMIN"),userController.createAdmin)
+router.post('/create-admin',auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),userController.createAdmin)
 
 
 export const userRoutes = router;
