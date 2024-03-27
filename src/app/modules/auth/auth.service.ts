@@ -66,7 +66,8 @@ const refreshToken = async(token:string)=>{
 const changePassword = async(user:any,payload:any) => {
     const userData = await prisma.user.findUniqueOrThrow({
         where:{
-            email:user.email
+            email:user.email,
+            status:UserStatus.ACTIVE
         }
     })
     const isCorrectPassword:Boolean = await bcrypt.compareSync(payload.oldPassword, userData.password)
@@ -87,8 +88,25 @@ const changePassword = async(user:any,payload:any) => {
         message:"Password Changed Successfully"
     }
 }
+
+const forgotPassword = async(payload: {email:string}) => {
+    const userData = await prisma.user.findUniqueOrThrow({
+        where:{
+            email:payload.email,
+            status:UserStatus.ACTIVE
+        }
+    })
+    const resetPasswordToken = generateToken(
+        {email:userData.email,role:userData.role},
+        config.jwt.reset_pass_key as Secret,
+        '5m'
+        );
+        const resetPassword = config.reset_password_link + `?userId=${userData.id}&token=${resetPasswordToken}`;
+        console.log(resetPassword)
+}
 export const AuthServices = {
     logInUser,
     refreshToken,
-    changePassword
+    changePassword,
+    forgotPassword
 }

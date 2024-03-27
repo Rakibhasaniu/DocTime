@@ -16,7 +16,7 @@ const auth = (...roles: string[]) => {
             }
 
             const verifiedUser = decodedToken.verifyToken(token, config.jwt.jwt_access_key as Secret)
-            console.log(verifiedUser)
+            // console.log(verifiedUser)
 
             req.user = verifiedUser;
 
