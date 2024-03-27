@@ -3,6 +3,7 @@ import { Secret } from "jsonwebtoken";
 import httpStatus from "http-status";
 import { decodedToken } from "../utils/decodedToken";
 import config from "../config";
+import AppError from "../errors/AppError";
 
 
 const auth = (...roles: string[]) => {
@@ -11,7 +12,7 @@ const auth = (...roles: string[]) => {
             const token = req.headers.authorization
 
             if (!token) {
-                throw new Error( "You are not authorized!")
+                throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!")
             }
 
             const verifiedUser = decodedToken.verifyToken(token, config.jwt.jwt_access_key as Secret)
@@ -19,7 +20,7 @@ const auth = (...roles: string[]) => {
             req.user = verifiedUser;
 
             if (roles.length && !roles.includes(verifiedUser.role)) {
-                throw new Error( "You are not authorized!")
+                throw new AppError(httpStatus.FORBIDDEN, "Forbidden!")
             }
             next()
         }
