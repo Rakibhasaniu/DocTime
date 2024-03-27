@@ -5,6 +5,7 @@ import { decodedToken } from '../../utils/decodedToken';
 import { Prisma, PrismaClient, UserStatus } from '@prisma/client';
 import config from '../../config';
 import prisma from '../../utils/prisma';
+import emailSender from './emailSender';
 
 
 
@@ -102,6 +103,20 @@ const forgotPassword = async(payload: {email:string}) => {
         '5m'
         );
         const resetPassword = config.reset_password_link + `?userId=${userData.id}&token=${resetPasswordToken}`;
+        await emailSender(userData.email,
+            `
+            <div>
+                <p>Dear User</p>
+                <p>Your Password Reset Link 
+                <a href=${resetPassword}>
+                <button>
+                Click Here To Reset Your Password
+                </button>
+                </a>
+                 </p>
+            </div>
+            `
+        )
         console.log(resetPassword)
 }
 export const AuthServices = {
