@@ -41,7 +41,7 @@ const createDoctorIntoDB = async(req:any) => {
     const hashedPassword:string = await bcrypt.hash(req.body.password, 10);
     // console.log(payload)
     const userData = {
-        email:req.body.admin.email,
+        email:req.body.doctor.email,
         password:hashedPassword,
         role:UserRole.DOCTOR
     }
@@ -50,10 +50,10 @@ const createDoctorIntoDB = async(req:any) => {
         await transac.user.create({
             data:userData
         })
-        const createDoctor = await transac.ad({
-            data:req.body.admin
+        const createDoctor = await transac.doctor.create({
+            data:req.body.doctor
         })
-        return createAdmin;
+        return createDoctor;
     })
     return result;
 }
