@@ -1,34 +1,30 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { userController } from "./user.controller";
-import { decodedToken } from "../../utils/decodedToken";
-import config from "../../config";
-import { Secret } from "jsonwebtoken";
 import auth from "../../middleware/auth";
 import { UserRole } from "@prisma/client";
+import  { fileUploader } from "../../utils/fileUploader";
 
 
 const router = Router();
 
-// const auth = (...roles:string[]) => {
-//     return async(req:Request,res:Response,next:NextFunction) => {
-//         try {
-//             const token = req.headers.authorization
-//             if(!token){
-//                 throw new Error("You are not authorized");
-//             }
-//             const verifiedUser = decodedToken.verifyToken(token,config.jwt.jwt_access_key as Secret)
-//             console.log(verifiedUser)
-//             if(roles.length && !roles.includes(verifiedUser.role)){
-//                 throw new Error("You are not authorized");
-//             }
-//             next()
-//         } catch (err) {
-//             next(err);
-//         }
-//     }
-// }
 
-router.post('/create-admin',auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),userController.createAdmin)
+          
+          
+import {v2 as cloudinary} from 'cloudinary';
+          
+cloudinary.config({ 
+  cloud_name: 'ddhnbjhvy', 
+  api_key: '632311187928324', 
+  api_secret: 'q-hNxQegIzQyoU6t_BD5loIpee0' 
+});
+
+cloudinary.uploader.upload("C:\\docTime\\uploads\\rakib.jpg",
+  { public_id: "olympic_flag" }, 
+  function(error, result) {console.log(result); });
+
+
+
+router.post('/create-admin',auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),fileUploader.upload.single('file'),userController.createAdmin)
 
 
 export const userRoutes = router;

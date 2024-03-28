@@ -6,6 +6,8 @@ import { Prisma, PrismaClient, UserStatus } from '@prisma/client';
 import config from '../../config';
 import prisma from '../../utils/prisma';
 import emailSender from './emailSender';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 
 
@@ -119,9 +121,32 @@ const forgotPassword = async(payload: {email:string}) => {
         )
         console.log(resetPassword)
 }
+
+const resetPassword = async(token:string,payload:{id:string,password:string}) => {
+    const userData = await prisma.user.findUniqueOrThrow({
+        where:{
+            id:payload.id,
+            status:UserStatus.ACTIVE
+        }
+    })
+    const isValidToken = decodedToken.verifyToken(token,config.jwt.reset_pass_key as Secret);
+    if(!isValidToken){
+        throw new AppError(httpStatus.FORBIDDEN,'Invalid Token')
+    }
+    const password = await bcrypt.hash(payload.password, 10);
+    await prisma.user.update({
+        where: {
+            id: payload.id
+        },
+        data: {
+            password
+        }
+    })
+}
 export const AuthServices = {
     logInUser,
     refreshToken,
     changePassword,
-    forgotPassword
+    forgotPassword,
+    resetPassword
 }
