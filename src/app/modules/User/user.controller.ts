@@ -22,9 +22,20 @@ const createDoctor:RequestHandler = catchAsync(async(req,res) => {
         data:result
      })
 })
+const createPatient:RequestHandler = catchAsync(async(req,res) => {
+   // console.log(req.file)
+   // console.log('data',req.body)
+        const result = await userServices.createPatientIntoDB(req);
+     res.status(200).json({
+        success:true,
+        message:'Patient created successfully',
+        data:result
+     })
+})
 
 
 export const userController = {
     createAdmin,
-    createDoctor
+    createDoctor,
+    createPatient
 }
