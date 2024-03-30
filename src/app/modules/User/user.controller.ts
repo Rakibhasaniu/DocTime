@@ -1,6 +1,10 @@
 import { Request, RequestHandler, Response } from "express";
 import { userServices } from "./user.service";
 import catchAsync from "../../utils/catchAsync";
+import sendResponse from "../../utils/sendResponse";
+import httpStatus from "http-status";
+import pick from "../../utils/pick";
+import { userFilterAbleField } from "./user.constant";
 
 const createAdmin:RequestHandler = catchAsync(async(req,res) => {
    // console.log(req.file)
@@ -32,10 +36,45 @@ const createPatient:RequestHandler = catchAsync(async(req,res) => {
         data:result
      })
 })
+const getAllUsers = catchAsync(async(req,res) => {
+
+   const filter = pick(req.query,userFilterAbleField);
+   const option = pick(req.query,["sortBy","limit","page",'sortOrder']);
+   const result = await userServices.getAllUserFromDB(filter,option);
+
+//  res.status(200).json({
+//     success:true,
+//     message:'Admin retrieve successfully',
+//     meta:result.meta,
+//     data:result.data
+//  })
+sendResponse(res,{
+   statusCode:httpStatus.OK,
+   success:true,
+   message:'Admin retrieve successfully',
+   meta:result.meta,
+   data:result.data
+})
+
+})
+const changeProfileStatus = catchAsync(async(req,res) => {
+   const {id} = req.params;
+      const result = await  userServices.changeProfileStatus(id, req.body);
+      sendResponse(res,{
+         statusCode:httpStatus.OK,
+         success:true,
+         message:'User Profile Status Changed',
+         
+         data:result
+      })
+})
 
 
 export const userController = {
     createAdmin,
     createDoctor,
-    createPatient
+    createPatient,
+    getAllUsers,
+    changeProfileStatus
+    
 }

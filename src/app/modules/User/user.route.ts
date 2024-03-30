@@ -8,7 +8,7 @@ import { UserValidation } from "./user.validation";
 
 const router = Router();
 
-
+router.get('/',auth(UserRole.SUPER_ADMIN,UserRole.ADMIN),userController.getAllUsers)
 router.post('/create-admin',auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),fileUploader.upload.single('file'),
 (req:Request,res:Response,next:NextFunction)=>{
   req.body=UserValidation.createAdmin.parse(JSON.parse(req.body.data));
@@ -25,6 +25,9 @@ router.post('/create-patient',fileUploader.upload.single('file'),
   req.body=UserValidation.createPatient.parse(JSON.parse(req.body.data));
   return userController.createPatient(req,res,next)
 })
+
+router.patch('/:id/status',auth(UserRole.SUPER_ADMIN,UserRole.ADMIN),userController.changeProfileStatus)
+
 
 
 export const userRoutes = router;

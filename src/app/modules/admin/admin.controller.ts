@@ -23,7 +23,7 @@ const getAllAdmin:RequestHandler = catchAsync(async(req,res) => {
     sendResponse(res,{
         statusCode:httpStatus.OK,
         success:true,
-        message:'Admin retrieve successfully',
+        message:'All User retrieve successfully',
         meta:result.meta,
         data:result.data
     })
