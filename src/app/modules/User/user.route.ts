@@ -8,6 +8,8 @@ import { UserValidation } from "./user.validation";
 
 const router = Router();
 
+
+router.get('/me',auth(UserRole.ADMIN,UserRole.DOCTOR,UserRole.PATIENT,UserRole.SUPER_ADMIN),userController.getMyProfile)
 router.get('/',auth(UserRole.SUPER_ADMIN,UserRole.ADMIN),userController.getAllUsers)
 router.post('/create-admin',auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),fileUploader.upload.single('file'),
 (req:Request,res:Response,next:NextFunction)=>{
