@@ -5,6 +5,7 @@ import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import pick from "../../utils/pick";
 import { userFilterAbleField } from "./user.constant";
+import { IAuthUser } from "../../interface/common";
 
 const createAdmin:RequestHandler = catchAsync(async(req,res) => {
    // console.log(req.file)
@@ -68,16 +69,28 @@ const changeProfileStatus = catchAsync(async(req,res) => {
          data:result
       })
 })
-const getMyProfile = catchAsync(async(req,res) => {
+const getMyProfile = catchAsync(async(req:Request & {user?:IAuthUser},res) => {
       const user = req.user
 
-      const result = await  userServices.getMyProfileFromDB(user);
+      const result = await  userServices.getMyProfileFromDB(user as IAuthUser );
 
 
       sendResponse(res,{
          statusCode:httpStatus.OK,
          success:true,
          message:'My Profile Data Fetched',
+         data:result
+      })
+})
+
+const updateProfile = catchAsync(async(req:Request & {user?:IAuthUser},res) => {
+   const user = req.user;
+      const result = await  userServices.updateMyProfileFromDB(user as IAuthUser, req);
+      sendResponse(res,{
+         statusCode:httpStatus.OK,
+         success:true,
+         message:'My Profile Updated',
+         
          data:result
       })
 })
@@ -89,6 +102,7 @@ export const userController = {
     createPatient,
     getAllUsers,
     changeProfileStatus,
-    getMyProfile
+    getMyProfile,
+    updateProfile
     
 }

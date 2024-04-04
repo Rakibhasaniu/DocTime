@@ -30,6 +30,12 @@ router.post('/create-patient',fileUploader.upload.single('file'),
 
 router.patch('/:id/status',auth(UserRole.SUPER_ADMIN,UserRole.ADMIN),userController.changeProfileStatus)
 
+router.patch('/update-my-profile',auth(UserRole.ADMIN,UserRole.SUPER_ADMIN,UserRole.PATIENT,UserRole.DOCTOR),fileUploader.upload.single('file'),
+(req:Request,res:Response,next:NextFunction)=>{
+  req.body=JSON.parse(req.body.data);
+  return userController.updateProfile(req,res,next)
+})
+
 
 
 export const userRoutes = router;
