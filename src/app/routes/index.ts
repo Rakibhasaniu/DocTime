@@ -3,6 +3,7 @@ import { userRoutes } from "../modules/user/user.route";
 import { AdminRoutes } from "../modules/admin/admin.route";
 import { AuthRoutes } from "../modules/auth/auth.route";
 import { SpecialtiesRoutes } from "../modules/specialties/specialties.route";
+import { DoctorRoutes } from "../modules/doctor/doctor.route";
 
 
 const router = Router();
@@ -23,6 +24,10 @@ const moduleRoutes = [
     {
         path: "/specialties",
         route:SpecialtiesRoutes
+    },
+    {
+        path: "/doctor",
+        route:DoctorRoutes
     },
 ]
 
