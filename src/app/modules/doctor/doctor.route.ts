@@ -8,6 +8,7 @@ import { DoctorController } from "./doctor.controller";
 const router = Router();
 
 router.get('/',auth(UserRole.SUPER_ADMIN),DoctorController.getAllDoctor)
+// router.get('/',DoctorController.getAllDoctor)
 router.get('/:id',auth(UserRole.SUPER_ADMIN),DoctorController.getSingleDoctor)
 router.patch('/:id',auth(UserRole.SUPER_ADMIN),DoctorController.updateDoctorData)
 router.delete('/:id',auth(UserRole.SUPER_ADMIN),DoctorController.deleteData)

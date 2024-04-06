@@ -4,12 +4,13 @@ import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import { DoctorServices } from "./doctor.service";
+import { doctorFilterableFields } from "./doctor.constant";
 
 
 
 const getAllDoctor:RequestHandler = catchAsync(async(req,res) => {
 
-        const filter = pick(req.query,adminFlterData);
+        const filter = pick(req.query,doctorFilterableFields);
         const option = pick(req.query,["sortBy","limit","page",'sortOrder']);
         const result = await DoctorServices.getAllDoctorFromDB(filter,option);
 
