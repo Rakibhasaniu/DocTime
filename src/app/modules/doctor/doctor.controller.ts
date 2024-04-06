@@ -11,7 +11,9 @@ import { doctorFilterableFields } from "./doctor.constant";
 const getAllDoctor:RequestHandler = catchAsync(async(req,res) => {
 
         const filter = pick(req.query,doctorFilterableFields);
+        // console.log(filter)
         const option = pick(req.query,["sortBy","limit","page",'sortOrder']);
+        // console.log(option)
         const result = await DoctorServices.getAllDoctorFromDB(filter,option);
 
     
@@ -54,16 +56,16 @@ const deleteData:RequestHandler = catchAsync(async(req,res) => {
             data:result
         })
 })
-const softDeleteData:RequestHandler = catchAsync(async(req,res) => {
-        const {id} = req.params;
-        const result = await DoctorServices.softDeleteDataFromDB(id);
-        sendResponse(res,{
-            statusCode:httpStatus.OK,
-            success:true,
-            message:'Doctor deleted successfully',
-            data:result
-        })
-})
+// const softDeleteData:RequestHandler = catchAsync(async(req,res) => {
+//         const {id} = req.params;
+//         const result = await DoctorServices.softDeleteDataFromDB(id);
+//         sendResponse(res,{
+//             statusCode:httpStatus.OK,
+//             success:true,
+//             message:'Doctor deleted successfully',
+//             data:result
+//         })
+// })
 
 
 
@@ -75,6 +77,6 @@ export const DoctorController = {
     getSingleDoctor,
     updateDoctorData,
     deleteData,
-    softDeleteData
+    // softDeleteData
 
 }

@@ -6,21 +6,10 @@ import { doctorSearchableFields } from "./doctor.constant";
 const prisma = new PrismaClient();
 
 const getAllDoctorFromDB = async(params:any,option:TPaginationOption) => {
-    // [
-    //     {
-    //         name:{
-    //             contains: query?.searchTerm,
-    //             mode:'insensitive'
-    //         }
-    //     },{
-    //         email:{
-    //             contains:query?.searchTerm,
-    //             mode:"insensitive"
-    //         }
-    //     }
-    // ]
+    
     const {limit,page,skip} =calculatePagination(option);
-    const {searchTerm,...filterData} = params;
+    const {searchTerm,specialties,...filterData} = params;
+    console.log(specialties)
     const condition:Prisma.DoctorWhereInput[] = [];
     if(params?.searchTerm){
         condition.push({
@@ -30,6 +19,20 @@ const getAllDoctorFromDB = async(params:any,option:TPaginationOption) => {
                     mode: "insensitive"
                 }
             }))
+        })
+    }
+    if(specialties && specialties.length > 0){
+        condition.push({
+            doctorSpecialties:{
+                some:{
+                    specialty:{
+                        title:{
+                            contains:specialties,
+                            mode:'insensitive'
+                        }
+                    }
+                }
+            }
         })
     }
     if(Object.keys(filterData).length > 0){
@@ -54,6 +57,13 @@ const getAllDoctorFromDB = async(params:any,option:TPaginationOption) => {
             [option.sortBy]:option.sortOrder
         } : {
             createdAt:'desc'
+        },
+        include:{
+            doctorSpecialties:{
+                include:{
+                    specialty:true
+                }
+            }
         }
     });
     const total=await prisma.doctor.count({
