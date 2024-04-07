@@ -2,19 +2,20 @@ import { Request, RequestHandler, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
-import { SchedulesServices } from "./schedule.service";
+import { DoctorSchedulesService } from "./doctorSchedule.service";
 
 
 const insertIntoDB:RequestHandler = catchAsync(async(req,res) => {
-    // console.log(req.body)
 
-    const result = await SchedulesServices.inserIntoDB(req.body);
+    const user = req.user;
+
+    const result = await DoctorSchedulesService.insertIntoDB(user,req.body);
  
 
     sendResponse(res,{
         statusCode:httpStatus.CREATED,
         success:true,
-        message:'Schedules created successfully',
+        message:'DoctorSchedules created successfully',
         data:result
         
     })
@@ -23,6 +24,6 @@ const insertIntoDB:RequestHandler = catchAsync(async(req,res) => {
 
 
 
-export const SchedulesController ={
+export const DoctorSchedulesController ={
     insertIntoDB,
 }
