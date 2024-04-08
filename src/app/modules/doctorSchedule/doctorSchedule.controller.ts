@@ -8,6 +8,7 @@ import { DoctorSchedulesService } from "./doctorSchedule.service";
 const insertIntoDB:RequestHandler = catchAsync(async(req,res) => {
 
     const user = req.user;
+    console.log(user)
 
     const result = await DoctorSchedulesService.insertIntoDB(user,req.body);
  
