@@ -18,9 +18,10 @@ const createAdmin:RequestHandler = catchAsync(async(req,res) => {
      })
 })
 const createDoctor:RequestHandler = catchAsync(async(req,res) => {
-   // console.log(req.file)
+   console.log(req)
    // console.log(req.body.data)
         const result = await userServices.createDoctorIntoDB(req);
+        console.log(result)
      res.status(200).json({
         success:true,
         message:'Doctor created successfully',

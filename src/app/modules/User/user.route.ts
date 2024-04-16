@@ -18,6 +18,7 @@ router.post('/create-admin',auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),fileUpload
 })
 router.post('/create-doctor',auth(UserRole.ADMIN,UserRole.SUPER_ADMIN),fileUploader.upload.single('file'),
 (req:Request,res:Response,next:NextFunction)=>{
+  console.log(req.body.data)
   req.body=UserValidation.createDoctor.parse(JSON.parse(req.body.data));
   return userController.createDoctor(req,res,next)
 })

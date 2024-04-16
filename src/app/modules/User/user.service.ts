@@ -37,6 +37,7 @@ const createAdminIntoDB = async(req:Request):Promise<Admin> => {
     return result;
 }
 const createDoctorIntoDB = async(req:Request):Promise<Doctor> => {
+    console.log(req)
     const file = req.file as IUploadFile;
     if(file){
         const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
@@ -52,9 +53,10 @@ const createDoctorIntoDB = async(req:Request):Promise<Doctor> => {
     }
 
     const result = await prisma.$transaction(async(transac)=> {
-        await transac.user.create({
+       const data= await transac.user.create({
             data:userData
         })
+        console.log(data)
         const createDoctor = await transac.doctor.create({
             data:req.body.doctor
         })
