@@ -6,10 +6,30 @@ import { UserRole } from "@prisma/client";
 
 const router = Router();
 
-router.post('/login',AuthController.login)
-router.post('/refresh-token',AuthController.refreshToken)
-router.post('/change-password',auth(UserRole.SUPER_ADMIN,UserRole.ADMIN,UserRole.PATIENT,UserRole.DOCTOR),AuthController.changePassword)
-router.post('/forgot-password',AuthController.forgotPassword)
-router.post('/reset-password',AuthController.resetPassword)
+router.post('/login',AuthController.login);
+router.post(
+    '/refresh-token',
+    AuthController.refreshToken
+)
 
+router.post(
+    '/change-password',
+    auth(
+        UserRole.SUPER_ADMIN,
+        UserRole.ADMIN,
+        UserRole.DOCTOR,
+        UserRole.PATIENT
+    ),
+    AuthController.changePassword
+);
+
+router.post(
+    '/forgot-password',
+    AuthController.forgotPassword
+);
+
+router.post(
+    '/reset-password',
+    AuthController.resetPassword
+)
 export const AuthRoutes = router;

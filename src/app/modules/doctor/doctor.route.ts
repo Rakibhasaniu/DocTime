@@ -1,17 +1,37 @@
-import { Router } from "express";
-import validateRequest from "../../middleware/validateRequest";
-import auth from "../../middleware/auth";
-import { UserRole, UserStatus } from "@prisma/client";
-import { DoctorController } from "./doctor.controller";
+import express from 'express'
+import { DoctorController } from './doctor.controller';
+import { UserRole } from '@prisma/client';
 
+import { DoctorValidation } from './doctor.validation';
+import auth from '../../middleware/auth';
+import validateRequest from '../../middleware/validateRequest';
 
-const router = Router();
+const router = express.Router();
 
-router.get('/',auth(UserRole.SUPER_ADMIN),DoctorController.getAllDoctor)
-// router.get('/',DoctorController.getAllDoctor)
-router.get('/:id',auth(UserRole.SUPER_ADMIN),DoctorController.getSingleDoctor)
-router.patch('/:id',auth(UserRole.SUPER_ADMIN),DoctorController.updateDoctorData)
-router.delete('/:id',auth(UserRole.SUPER_ADMIN),DoctorController.deleteData)
-// router.delete('/soft/:id',auth(UserRole.SUPER_ADMIN),DoctorController.softDeleteData)
+// task 3
+router.get('/', DoctorController.getAllFromDB);
 
-export const DoctorRoutes = router;
+//task 4
+router.get('/:id', DoctorController.getByIdFromDB);
+
+router.patch(
+    '/:id',
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
+    validateRequest(DoctorValidation.update),
+    DoctorController.updateIntoDB
+);
+
+//task 5
+router.delete(
+    '/:id',
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+    DoctorController.deleteFromDB
+);
+
+// task 6
+router.delete(
+    '/soft/:id',
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+    DoctorController.softDelete);
+
+export const DoctorRoutes = router

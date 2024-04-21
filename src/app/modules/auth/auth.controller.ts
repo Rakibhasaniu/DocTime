@@ -1,89 +1,92 @@
-import { Request, RequestHandler, Response } from "express";
+import { Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
-import { AuthServices } from "./auth.service";
+import { AuthService } from "./auth.service";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 
 
-const login:RequestHandler = catchAsync(async(req,res) => {
-    const result = await AuthServices.logInUser(req.body);
-    const {refreshToken} = result;
-    res.cookie('refreshToken',refreshToken,{
-        secure:false,
-        httpOnly : true
+const login = catchAsync(async(req:Request,res:Response) =>{
+    const result = await AuthService.loginUser(req.body);
+    const { refreshToken } = result;
+
+    res.cookie('refreshToken', refreshToken, {
+        secure: false,
+        httpOnly: true
     });
 
-    sendResponse(res,{
-        statusCode:httpStatus.OK,
-        success:true,
-        message:'Login Successfully',
-        data:{
-            accessToken:result.accessToken,
-            needsPasswordChange:result.needPasswordChange,
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Logged in successfully!",
+        data: {
+            accessToken: result.accessToken,
+            needPasswordChange: result.needPasswordChange
         }
     })
 })
-const refreshToken:RequestHandler = catchAsync(async(req,res) => {
+const refreshToken = catchAsync(async (req: Request, res: Response) => {
+    // const { refreshToken } = req.cookies;
     const {refreshToken} = req.cookies;
-    const result = await AuthServices.refreshToken(refreshToken);
- 
+    // console.log(req)
 
-    sendResponse(res,{
-        statusCode:httpStatus.OK,
-        success:true,
-        message:'Refresh token generated Successfully',
-        data:result
-        // data:{
-        //     accessToken:result.accessToken,
-        //     needsPasswordChange:result.needPasswordChange,
+    const result = await AuthService.refreshToken(refreshToken);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Access token generated successfully!",
+        data: result
+        // data: {
+        //     accessToken: result.accessToken,
+        //     needPasswordChange: result.needPasswordChange
         // }
     })
-})
-const changePassword = catchAsync(async(req:Request & { user?: any } ,res : Response) => {
-    const user=req.user;
+});
 
-    const result = await AuthServices.changePassword(user,req.body);
- 
 
-    sendResponse(res,{
-        statusCode:httpStatus.OK,
-        success:true,
-        message:'Password Changed Successfully',
-        data:result
-       
+const changePassword = catchAsync(async (req: Request & { user?: any }, res: Response) => {
+    const user = req.user;
+
+    const result = await AuthService.changePassword(user, req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Password Changed successfully",
+        data: result
     })
-})
+});
 
-const forgotPassword:RequestHandler = catchAsync(async(req,res) => {
-       await AuthServices.forgotPassword(req.body);
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
 
-    sendResponse(res,{
-        statusCode:httpStatus.OK,
-        success:true,
-        message:"Check your email",
-        data:null
+    await AuthService.forgotPassword(req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Check your email!",
+        data: null
     })
-})
-const resetPassword:RequestHandler = catchAsync(async(req,res) => {
+});
+
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+
     const token = req.headers.authorization || "";
-    
-       await AuthServices.resetPassword(token,req.body);
 
-    sendResponse(res,{
-        statusCode:httpStatus.OK,
-        success:true,
-        message:"Password reset",
-        data:null
+    await AuthService.resetPassword(token, req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Password Reset!",
+        data: null
     })
-})
+});
 
-
-
-export const AuthController ={
+export const AuthController = {
     login,
     refreshToken,
     changePassword,
     forgotPassword,
     resetPassword
-
 }

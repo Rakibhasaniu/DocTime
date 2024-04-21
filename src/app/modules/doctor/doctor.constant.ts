@@ -5,14 +5,13 @@ export const doctorSearchableFields: string[] = [
     'address',
     'qualification',
     'designation'
-  ];
-  
-  export const doctorFilterableFields: string[] = [
+];
+
+export const doctorFilterableFields: string[] = [
     'searchTerm',
     'email',
     'contactNumber',
     'gender',
-    'appointFee',
+    'appointmentFee',
     'specialties'
-  ];
-  
+];
