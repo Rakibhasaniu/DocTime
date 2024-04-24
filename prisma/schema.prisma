@@ -75,7 +75,7 @@ model Doctor {
   user                User                @relation(fields: [email], references: [email])
   doctorSpecialties   DoctorSpecialties[]
   doctorSchedules     DoctorSchedules[]
-
+  appointment         Appointment[]
   @@map("doctors")
 }
 
@@ -98,6 +98,7 @@ model Patient {
   user              User               @relation(references: [email], fields: [email])
   patientHealthData PatientHealthData?
   medicalReport     MedicalReport[]
+  appoinment Appointment[]
 
   @@map("patients")
 }
@@ -181,6 +182,7 @@ model Schedule {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   doctorSchedules DoctorSchedules[]
+  appointment     Appointment?
 
   @@map("schedules")
 }
@@ -222,7 +224,7 @@ model Appointment {
   // payment        Payment?
   // prescription   Prescription?
   // review         Review?
-  DoctorSchedule DoctorSchedule[]
+  // DoctorSchedule DoctorSchedule[]
 
   @@map("appointments")
 }
