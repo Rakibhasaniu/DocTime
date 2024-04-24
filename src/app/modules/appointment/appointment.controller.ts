@@ -3,11 +3,12 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import { AppointmentService } from "./appointment.service";
+import { IAuthUser } from "../../interface/common";
 
 
-const  createAppointment = catchAsync(async(req:Request,res:Response) =>{
-
-    const result = await AppointmentService.createAppointment()
+const  createAppointment = catchAsync(async(req:Request & {user?:IAuthUser},res:Response) =>{
+    const user = req.user
+    const result = await AppointmentService.createAppointment(user as IAuthUser,req.body)
 
     sendResponse(res, {
         statusCode: httpStatus.OK,

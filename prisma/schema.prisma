@@ -196,7 +196,9 @@ model DoctorSchedules {
 
   isBooked Boolean @default(false)
 
-  appointmentId String?
+  appointmentId String? @unique
+
+  appointment  Appointment? @relation(fields: [appointmentId],references: [id])
 
   @@id([doctorId, scheduleId])
   @@map("doctor_schedules")
@@ -221,15 +223,27 @@ model Appointment {
   notes          String?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
-  // payment        Payment?
+  payment        Payment?
   // prescription   Prescription?
   // review         Review?
-  // DoctorSchedule DoctorSchedule[]
+  doctorSchedule DoctorSchedules?
 
   @@map("appointments")
 }
 
 
+
+model Payment {
+  id                 String        @id @default(uuid())
+  appointmentId      String        @unique
+  appointment        Appointment   @relation(fields: [appointmentId], references: [id])
+  amount             Float         @default(0.00)
+  transactionId      String        @unique
+  status             PaymentStatus @default(UNPAID)
+  paymentGatewayData Json?
+
+  @@map("payments")
+}
 
 enum AppointmentStatus {
   SCHEDULED
