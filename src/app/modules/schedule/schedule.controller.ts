@@ -7,6 +7,7 @@ import { scheduleFilterableFields } from './schedule.constants';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import pick from '../../utils/pick';
+import { IAuthUser } from '../../interface/common';
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const result = await ScheduleService.insertIntoDB(req.body);
@@ -17,11 +18,11 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
+const getAllFromDB = catchAsync(async (req: Request &{user?:IAuthUser}, res: Response) => {
   const filters = pick(req.query, scheduleFilterableFields);
   const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
   const user = req.user;
-  const result = await ScheduleService.getAllFromDB(filters, options, user);
+  const result = await ScheduleService.getAllFromDB(filters, options);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

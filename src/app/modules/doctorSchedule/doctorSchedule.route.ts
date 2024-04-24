@@ -8,10 +8,10 @@ import { UserRole } from '@prisma/client';
 
 
 const router = express.Router();
-// router.get(
-//   '/',
-//   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.DOCTOR, ENUM_USER_ROLE.PATIENT),
-//   ScheduleController.getAllFromDB);
+router.get(
+  '/',
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR,UserRole.PATIENT),
+  ScheduleController.getAllFromDB);
 
 // router.get(
 //   '/my-schedules',
