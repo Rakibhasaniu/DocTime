@@ -22,7 +22,7 @@ const getAllFromDB = catchAsync(async (req: Request &{user?:IAuthUser}, res: Res
   const filters = pick(req.query, scheduleFilterableFields);
   const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
   const user = req.user;
-  const result = await ScheduleService.getAllFromDB(filters, options);
+  const result = await ScheduleService.getAllFromDB(filters, options,user as IAuthUser);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

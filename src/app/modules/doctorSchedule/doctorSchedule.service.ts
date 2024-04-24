@@ -8,6 +8,7 @@ import ApiError from '../../errors/appError';
 import { IPaginationOptions } from '../../interface/pagination';
 import { paginationHelper } from '../../utils/paginationHelpers';
 import { DoctorSchedules, Prisma } from '@prisma/client';
+import { IAuthUser } from '../../interface/common';
 
 
 const insertIntoDB = async (data: { scheduleIds: string[] }, user: any): Promise<{ count: number }> => {
@@ -83,7 +84,7 @@ const getAllFromDB = async (
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-          createdAt: 'desc',
+          
         },
   });
   const total = await prisma.doctorSchedules.count({
@@ -100,119 +101,123 @@ const getAllFromDB = async (
   };
 };
 
-// const getByIdFromDB = async (id: string): Promise<DoctorSchedule | null> => {
-//   const result = await prisma.doctorSchedule.findUnique({
-//     where: {
-//       id,
-//     },
-//     include: {
-//       doctor: true,
-//       schedule: true,
-//     },
-//   });
-//   return result;
-// };
+const getByIdFromDB = async (id: string) => {
+  console.log('ct',id)
 
-// const updateIntoDB = async (
-//   id: string,
-//   payload: Partial<DoctorSchedule>,
-// ): Promise<DoctorSchedule | null> => {
-//   const result = await prisma.doctorSchedule.update({
-//     where: {
-//       id,
-//     },
-//     data: payload,
-//     include: {
-//       doctor: true,
-//       schedule: true,
-//     },
-//   });
-//   return result;
-// };
+  const result = await prisma.doctorSchedules.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      doctor: true,
+      schedule: true,
+    },
+  });
+  console.log(result)
+  return result;
+};
 
-// const deleteFromDB = async (user: any, scheduleId: string): Promise<DoctorSchedules> => {
-//   const isDoctorExists = await prisma.doctor.findFirst({
-//     where: {
-//       email: user.email
-//     }
-//   });
+const updateIntoDB = async (
+  id: string,
+  payload: Partial<DoctorSchedules>,
+): Promise<DoctorSchedules | null> => {
+  const result = await prisma.doctorSchedules.update({
+    where: {
+      id,
+    },
+    data: payload,
+    include: {
+      doctor: true,
+      schedule: true,
+    },
+  });
+  return result;
+};
 
-//   if (!isDoctorExists) {
-//     throw new ApiError(httpStatus.BAD_REQUEST, "Doctor does not exitsts")
-//   }
+const deleteFromDB = async (user: any, scheduleId: string): Promise<DoctorSchedules> => {
+  const isDoctorExists = await prisma.doctor.findFirst({
+    where: {
+      email: user.email
+    }
+  });
 
-//   const result = await prisma.doctorSchedules.delete({
-//     where: {
-//       doctorId_scheduleId: {
-//         doctorId: isDoctorExists.id,
-//         scheduleId: scheduleId
-//       }
-//     }
-//   })
-//   return result;
-// };
+  if (!isDoctorExists) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Doctor does not exitsts")
+  }
 
-// const getMySchedules = async (
-//   filters: IDoctorScheduleFilterRequest,
-//   options: IPaginationOptions,
-//   user: any
-// ) => {
-//   const { limit, page, skip } = paginationHelper.calculatePagination(options);
-//   const { startDate, endDate, ...filterData } = filters;
+  const result = await prisma.doctorSchedules.delete({
+    where: {
+      doctorId_scheduleId: {
+        doctorId: isDoctorExists.id,
+        scheduleId: scheduleId
+      }
+    }
+  })
+  return result;
+};
 
-//   const whereConditions: Prisma.DoctorSchedulesWhereInput = {
-//     doctor: {
-//       email: user.email
-//     },
-//     ...(startDate && endDate ? {
-//       schedule: {
-//         startDate: {
-//           gte: new Date(startDate)
-//         },
-//         endDate: {
-//           lte: new Date(endDate)
-//         }
-//       }
-//     } : {}),
-//     ...(Object.keys(filterData).length > 0 ? {
-//       AND: Object.keys(filterData).map(key => ({
-//         [key]: {
-//           equals: (filterData as any)[key],
-//         },
-//       })),
-//     } : {})
-//   };
+const getMySchedules = async (
+  filters: any,
+  options: IPaginationOptions,
+  user: IAuthUser
+) => {
+  const { limit, page, skip } = paginationHelper.calculatePagination(options);
+  const { startDateTime, endDateTime, ...filterData } = filters;
+
+  const whereConditions: Prisma.DoctorSchedulesWhereInput = {
+    doctor: {
+      email: user?.email
+    },
+    ...(startDateTime && endDateTime ? {
+      schedule: {
+        startDateTime: {
+          gte: new Date(startDateTime)
+        },
+        endDateTime: {
+          lte: new Date(endDateTime)
+        }
+      }
+    } : {}),
+    ...(Object.keys(filterData).length > 0 ? {
+      
+      AND: Object.keys(filterData).map(key => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    } : {})
+  };
 
 
-//   const doctorSchedules = await prisma.doctorSchedules.findMany({
-//     where: whereConditions,
-//     include: {
-//       doctor: true,
-//       schedule: true,
-//       appointment: true,
-//     },
-//     skip,
-//     take: limit,
-//     orderBy: {
-//       createdAt: 'desc',
-//     },
-//   });
+  const doctorSchedules = await prisma.doctorSchedules.findMany({
+    where: whereConditions,
+    include: {
+      doctor: true,
+      schedule: true,
+      // appointment: true,
+    },
+    skip,
+    take: limit,
+    // orderBy: {
+    
+    // },
+  });
 
-//   return {
-//     meta: {
-//       total: doctorSchedules.length,
-//       page,
-//       limit,
-//     },
-//     data: doctorSchedules,
-//   };
-// };
+  return {
+    meta: {
+      total: doctorSchedules.length,
+      page,
+      limit,
+    },
+    data: doctorSchedules,
+  };
+};
 
 export const DoctorScheduleService = {
   insertIntoDB,
   getAllFromDB,
-  // getByIdFromDB,
-  // updateIntoDB,
-//   deleteFromDB,
-//   getMySchedules
+  getByIdFromDB,
+  updateIntoDB,
+  deleteFromDB,
+  getMySchedules
 };
