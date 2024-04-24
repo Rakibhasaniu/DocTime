@@ -17,6 +17,7 @@ const insertIntoDB = async (data: { scheduleIds: string[] }, user: any): Promise
       email: user.email
     }
   });
+  // console.log('doctor',isDoctorExists)
 
   if (!isDoctorExists) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Doctor does not exists!")
@@ -29,6 +30,7 @@ const insertIntoDB = async (data: { scheduleIds: string[] }, user: any): Promise
   const result = await prisma.doctorSchedules.createMany({
     data: doctorSchedulesData
   });
+  console.log('result',result)
   return result;
 };
 

@@ -1,12 +1,12 @@
 export type ISchedule = {
-    startDate: string;
-    endDate: string;
+  startDateTime: string;
+  endDateTime: string;
     startTime: string;
     endTime: string;
   };
   
   export type IScheduleFilterRequest = {
-    startDate?: string | undefined;
-    endDate?: string | undefined;
+    startDateTime?: string | undefined;
+    endDateTime?: string | undefined;
   };
   

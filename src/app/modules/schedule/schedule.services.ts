@@ -11,15 +11,17 @@ const convertDateTime = async (date: Date) => {
   return new Date(date.getTime() + offset);
 }
 
-const insertIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
-  const { startDate, endDate, startTime, endTime } = payload;
+const insertIntoDB = async (payload: ISchedule) => {
+  const { startDateTime, endDateTime, startTime, endTime } = payload;
 
   const interverlTime = 30;
 
   const schedules = [];
 
-  const currentDate = new Date(startDate); // start date
-  const lastDate = new Date(endDate) // end date
+  const currentDate = new Date(startDateTime); // start date
+  const lastDate = new Date(endDateTime) // end date
+  console.log(currentDate)
+  console.log(lastDate)
 
   while (currentDate <= lastDate) {
     // 09:30  ---> ['09', '30']
@@ -32,7 +34,8 @@ const insertIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
         Number(startTime.split(':')[1])
       )
     );
-
+    console.log(startDateTime)
+  
     const endDateTime = new Date(
       addMinutes(
         addHours(
@@ -42,25 +45,27 @@ const insertIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
         Number(endTime.split(':')[1])
       )
     );
+    console.log('s',endDateTime)
+  
 
     while (startDateTime < endDateTime) {
-      // const scheduleData = {
-      //     startDateTime: startDateTime,
-      //     endDateTime: addMinutes(startDateTime, interverlTime)
-      // }
-
-      const s = await convertDateTime(startDateTime);
-      const e = await convertDateTime(addMinutes(startDateTime, interverlTime))
-
       const scheduleData = {
-        startDate: s,
-        endDate: e
+          startDateTime: startDateTime,
+          endDateTime: addMinutes(startDateTime, interverlTime)
       }
+
+      // const s = await convertDateTime(startDateTime);
+      // const e = await convertDateTime(addMinutes(startDateTime, interverlTime))
+
+      // const scheduleData = {
+      //   startDateTime: s,
+      //   endDateTime: e
+      // }
 
       const existingSchedule = await prisma.schedule.findFirst({
         where: {
-          startDate: scheduleData.startDate,
-          endDate: scheduleData.endDate
+          startDateTime: scheduleData.startDateTime,
+          endDateTime: scheduleData.endDateTime
         }
       });
 
@@ -70,13 +75,13 @@ const insertIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
         });
         schedules.push(result);
       }
+      // console.log(scheduleData)
 
       startDateTime.setMinutes(startDateTime.getMinutes() + interverlTime);
     }
 
     currentDate.setDate(currentDate.getDate() + 1);
   }
-
   return schedules;
 };
 
