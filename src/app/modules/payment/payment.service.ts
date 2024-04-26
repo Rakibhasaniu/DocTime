@@ -1,50 +1,86 @@
 import axios from 'axios'
 import config from '../../config';
+import prisma from '../../utils/prisma';
+import { SSlService } from '../ssl/ssl.service';
+import { PaymentStatus } from '@prisma/client';
 
-const initPayment = async() => {
-    const data = {
-        store_id:config.ssl.storeId,
-        store_passwd:config.ssl.storePass,
-        total_amount: 100,
-        currency: 'BDT',
-        tran_id: 'REF123', // use unique tran_id for each api call
-        success_url: config.ssl.successUrl,
-        fail_url: config.ssl.failUrl,
-        cancel_url: config.ssl.cancelUrl,
-        ipn_url: 'http://localhost:3030/ipn',
-        shipping_method: 'Courier',
-        product_name: 'Computer.',
-        product_category: 'Electronic',
-        product_profile: 'general',
-        cus_name: 'Customer Name',
-        cus_email: 'customer@example.com',
-        cus_add1: 'Dhaka',
-        cus_add2: 'Dhaka',
-        cus_city: 'Dhaka',
-        cus_state: 'Dhaka',
-        cus_postcode: '1000',
-        cus_country: 'Bangladesh',
-        cus_phone: '01711111111',
-        cus_fax: '01711111111',
-        ship_name: 'Customer Name',
-        ship_add1: 'Dhaka',
-        ship_add2: 'Dhaka',
-        ship_city: 'Dhaka',
-        ship_state: 'Dhaka',
-        ship_postcode: 1000,
-        ship_country: 'Bangladesh',
-    };
-
-    const response = await axios({
-        method:'post',
-        url:config.ssl.ssl_payment_api,
-        data:data,
-        headers:{'Content-Type':'application/x-www-form-urlencoded'}
+const initPayment = async(id:string) => {
+    const paymentData = await prisma.payment.findFirstOrThrow({
+        where:{
+            appointmentId:id
+        },
+        include:{
+            appointment:{
+                include:{
+                    patient:true
+                }
+            }
+        }
     })
-    console.log(response.data)
+    // console.log(paymentData)
+    const initPaymentData = {
+        amount: paymentData.amount,
+        transactionId: paymentData.transactionId,
+        name: paymentData.appointment.patient.name,
+        email: paymentData.appointment.patient.email,
+        address: paymentData.appointment.patient.address,
+        phoneNumber: paymentData.appointment.patient.contactNumber
+    }
+    // console.log(initPaymentData)
+
+    const result = await SSlService.initPayment(initPaymentData)
+    
+    return {
+        paymentUrl:result.GatewayPageURL
+    }
+    
+}
+const validatePayment = async (payload: any) => {
+    if (!payload || !payload.status || !(payload.status === 'VALID')) {
+        return {
+            message: "Invalid Payment!"
+        }
+    }
+
+    const response = await SSlService.validatePayment(payload);
+
+    if (response?.status !== 'VALID') {
+        return {
+            message: "Payment Failed!"
+        }
+    }
+
+    // const response = payload;
+
+    // await prisma.$transaction(async (tx) => {
+    //     const updatedPaymentData = await tx.payment.update({
+    //         where: {
+    //             transactionId: response.tran_id
+    //         },
+    //         data: {
+    //             status: PaymentStatus.PAID,
+    //             paymentGatewayData: response
+    //         }
+    //     });
+
+    //     await tx.appointment.update({
+    //         where: {
+    //             id: updatedPaymentData.appointmentId
+    //         },
+    //         data: {
+    //             paymentStatus: PaymentStatus.PAID
+    //         }
+    //     })
+    // });
+
+    // return {
+    //     message: "Payment success!"
+    // }
+
 }
 
 export const PaymentService = {
     initPayment,
+    validatePayment
     
 }

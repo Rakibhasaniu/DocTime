@@ -21,7 +21,7 @@ export default {
     },
     ssl:{
         storeId:process.env.STORE_ID,
-        storePass:process.env.STORE_PASS,
+        storePass:process.env.STORE_PASSWORD,
         successUrl:process.env.SUCCESS_URL,
         failUrl:process.env.FAIL_URL,
         cancelUrl:process.env.CANCEL_URL,
