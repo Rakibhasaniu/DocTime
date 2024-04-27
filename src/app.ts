@@ -20,6 +20,7 @@ app.use(cookieParser())
 cron.schedule('* * * * *', () => {
     try {
         AppointmentService.cancelUnpaidAppointments();
+        // console.log('hhh')
     }
     catch (err) {
         console.error(err);
