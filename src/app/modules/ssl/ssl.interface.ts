@@ -4,5 +4,5 @@ export type IPaymentData = {
     name: string;
     email: string;
     address: string | null;
-    phoneNumber: string | null;
+    contactNumber: string | null;
 }

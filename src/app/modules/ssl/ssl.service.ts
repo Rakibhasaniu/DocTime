@@ -2,9 +2,10 @@ import config from "../../config";
 import axios from 'axios'
 import ApiError from "../../errors/appError";
 import httpStatus from "http-status";
+import { IPaymentData } from "./ssl.interface";
 
 
-const initPayment = async(paymentData:any) => {
+const initPayment = async(paymentData:IPaymentData) => {
     // console.log(paymentData)
     try{
         const data = {

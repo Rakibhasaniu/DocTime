@@ -5,6 +5,8 @@ import httpStatus from "http-status";
 import { AppointmentService } from "./appointment.service";
 import { IAuthUser } from "../../interface/common";
 import pick from "../../utils/pick";
+import prisma from "../../utils/prisma";
+import { PaymentStatus } from "@prisma/client";
 
 
 const  createAppointment = catchAsync(async(req:Request & {user?:IAuthUser},res:Response) =>{
@@ -31,8 +33,23 @@ const  getMyAppointment = catchAsync(async(req:Request & {user?:IAuthUser},res:R
         data: result
     })
 })
+const  changeAppointmentStatus = catchAsync(async(req:Request & {user?:IAuthUser},res:Response) =>{
+    const {id} = req.params;
+    const {status} = req.body;
+    const user  = req.user;
+    const result = await AppointmentService.changeAppointmentStatus(id,status,user as IAuthUser)
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: " Appointment status changed successfully",
+        data: result
+    })
+})
+
 
 export const AppointmentController = {
     createAppointment,
     getMyAppointment,
+    changeAppointmentStatus,
 }

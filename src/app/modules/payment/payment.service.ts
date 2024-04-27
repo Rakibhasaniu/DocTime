@@ -25,7 +25,7 @@ const initPayment = async(id:string) => {
         name: paymentData.appointment.patient.name,
         email: paymentData.appointment.patient.email,
         address: paymentData.appointment.patient.address,
-        phoneNumber: paymentData.appointment.patient.contactNumber
+        contactNumber: paymentData.appointment.patient.contactNumber
     }
     // console.log(initPaymentData)
 
